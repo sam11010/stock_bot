@@ -60,7 +60,7 @@ def run_stock_analysis():
     ensure_csv(csv_file)
     df = load_ticker_list(csv_file)
     tickers = df["ticker"].tolist()
-    
+
     if not tickers:
         print("❌ Inga tickers hittades i CSV-filen. Fyll i filen med tickers och kör igen.")
         return
@@ -84,7 +84,7 @@ def run_stock_analysis():
     updated_df = pd.DataFrame({"ticker": tickers_to_keep})
     save_ticker_list(csv_file, updated_df)
     print(f"\n✅ Analys klar! Totalt fungerande tickers: {len(tickers_to_keep)} / {len(tickers)}")
-    
+
     # Spara analysresultaten med signal
     results_df = pd.DataFrame(working_results)
     analysis_csv = "analysis_results.csv"

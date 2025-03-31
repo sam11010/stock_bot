@@ -1,6 +1,4 @@
-# For more details on the format and content:
-# https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-robotyaml
-
+# robot.yaml
 tasks:
   run_rsi_sma:
     shell: python -m robocorp.tasks run rsi_sma_crossover.py

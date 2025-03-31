@@ -2,8 +2,10 @@
 # https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-is-in-robotyaml
 
 tasks:
-  Run Task:
-    shell: python -m robocorp.tasks run tasks.py
+  run_rsi_sma:
+    shell: python -m robocorp.tasks run rsi_sma_crossover.py
+  email_sender:
+    shell: python -m robocorp.tasks run email_sender.py
 
 environmentConfigs:
   - environment_windows_amd64_freeze.yaml

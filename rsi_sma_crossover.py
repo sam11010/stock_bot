@@ -2,11 +2,7 @@ import os
 import pandas as pd
 import yfinance as yf
 from tqdm import tqdm
-import smtplib
-from email.message import EmailMessage
 from robocorp.tasks import task
-
-# ------------------ ANALYSDEL ------------------
 
 def calculate_rsi(data, period=14):
     delta = data['Close'].diff()
@@ -43,10 +39,10 @@ def analyze_ticker(symbol):
         data['SMA_20'] = data['Close'].rolling(window=20, min_periods=1).mean()
         data['RSI'] = calculate_rsi(data)
         latest = data.iloc[-1]
-        # Använd .iloc[0] för att extrahera skalära värden
-        close = float(latest['Close'].iloc[0])
-        rsi = float(latest['RSI'].iloc[0])
-        sma = float(latest['SMA_20'].iloc[0])
+        # Konvertera till skalära värden
+        close = float(latest['Close'])
+        rsi = float(latest['RSI'])
+        sma = float(latest['SMA_20'])
         if rsi < 30 and close > sma:
             signal = "KÖP"
         elif rsi > 70 and close < sma:
@@ -54,36 +50,12 @@ def analyze_ticker(symbol):
         else:
             signal = "AVVAKTA"
         return {"symbol": symbol, "close": close, "rsi": rsi, "sma": sma, "signal": signal}
-    except Exception:
+    except Exception as e:
+        print(f"Fel vid analys av {symbol}: {e}")
         return None
-
-# ------------------ E-POSTDEL ------------------
-
-def send_email_with_attachment(sender, recipient, subject, body, attachment_path,
-                               smtp_server, smtp_port, username, password):
-    """Skickar ett e-postmeddelande med en bilaga via SMTP_SSL."""
-    msg = EmailMessage()
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = recipient
-    msg.set_content(body)
-    
-    with open(attachment_path, 'rb') as f:
-        file_data = f.read()
-        file_name = os.path.basename(attachment_path)
-    
-    msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
-    
-    with smtplib.SMTP_SSL(smtp_server, smtp_port) as smtp:
-        smtp.login(username, password)
-        smtp.send_message(msg)
-    print(f"E-post skickat till {recipient} med bilagan {file_name}.")
-
-# ------------------ HUVUDDEL ------------------
 
 @task
 def run_stock_analysis():
-    # CSV-hantering
     csv_file = "tickers.csv"
     ensure_csv(csv_file)
     df = load_ticker_list(csv_file)
@@ -118,17 +90,3 @@ def run_stock_analysis():
     analysis_csv = "analysis_results.csv"
     results_df.to_csv(analysis_csv, index=False)
     print(f"📄 Resultaten sparade i '{analysis_csv}'.")
-    
-    # Skicka CSV-filen via e-post
-    # Ange dina e-postuppgifter nedan
-    sender = "s.gronlund8@gmail.com"
-    recipient = "s.gronlund8@gmail.com"
-    subject = "Dagens analysresultat"
-    body = ("Hej,\n\nBifogat finner du den senaste CSV-filen med aktieanalysresultat.\n\nMed vänlig hälsning,\nDin Bot")
-    smtp_server = "smtp.gmail.com"  # t.ex. smtp.gmail.com
-    smtp_port = 465                  # vanligtvis 465 för SSL
-    username = "s.gronlund8@gmail.com"
-    password = os.environ.get("EMAIL_PASSWORD")        # helst ett applikationsspecifikt lösenord
-
-    send_email_with_attachment(sender, recipient, subject, body, analysis_csv,
-                               smtp_server, smtp_port, username, password)

@@ -126,7 +126,7 @@ def run_stock_analysis():
     subject = "Dagens analysresultat"
     body = ("Hej,\n\nBifogat finner du den senaste CSV-filen med aktieanalysresultat.\n\nMed vänlig hälsning,\nDin Bot")
     smtp_server = "smtp.gmail.com"  # t.ex. smtp.gmail.com
-    smtp_port = 465                   # vanligtvis 465 för SSL
+    smtp_port = 465                  # vanligtvis 465 för SSL
     username = "s.gronlund8@gmail.com"
     password = os.environ.get("EMAIL_PASSWORD")        # helst ett applikationsspecifikt lösenord
 

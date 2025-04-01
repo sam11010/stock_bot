@@ -1,7 +1,7 @@
 # robot.yaml
 tasks:
   master_task:
-    shell: sh -c "python -m robocorp.tasks run rsi_sma_crossover.py && python -m robocorp.tasks run email_sender.py"
+    shell: sh -c "python -m robocorp.tasks run rsi_sma_crossover.py && python -m robocorp.tasks run macd.py && python -m robocorp.tasks run email_sender.py"
 
 environmentConfigs:
   - environment_windows_amd64_freeze.yaml

@@ -2,6 +2,7 @@ import os
 import smtplib
 from email.message import EmailMessage
 from robocorp.tasks import task
+from RPA.Robocorp.Vault import Vault  
 
 def send_email_with_attachment(sender, recipient, subject, body, attachment_path,
                                smtp_server, smtp_port, username, password):
@@ -25,18 +26,20 @@ def send_email_with_attachment(sender, recipient, subject, body, attachment_path
 
 @task
 def send_email_task():
-    # Ange dina e-postuppgifter
     sender = "s.gronlund8@gmail.com"
     recipient = "s.gronlund8@gmail.com"
     subject = "Dagens analysresultat"
     body = ("Hej,\n\nBifogat finner du den senaste CSV-filen med aktieanalysresultat.\n\nMed vänlig hälsning,\nDin Bot")
-    smtp_server = "smtp.gmail.com"  # t.ex. smtp.gmail.com
-    smtp_port = 465                   # vanligtvis 465 för SSL
+    smtp_server = "smtp.gmail.com"  
+    smtp_port = 465               
     username = "s.gronlund8@gmail.com"
-    # För bästa säkerhet, lagra lösenordet som en miljövariabel (t.ex. EMAIL_PASSWORD)
-    password = os.environ.get("EMAIL_PASSWORD")
+
+    vault = Vault()
+    credentials = vault.get_secret("email_credentials")
+    password = credentials.get("password")
+    
     if not password:
-        raise ValueError("EMAIL_PASSWORD environment variable is not set")
+        raise ValueError("Ingen 'password' hittades i secret 'credentials' i Vault.")
     
     attachment_path = "analysis_results.csv"
     send_email_with_attachment(sender, recipient, subject, body, attachment_path,

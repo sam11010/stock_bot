@@ -87,6 +87,6 @@ def run_stock_analysis():
 
     # Spara analysresultaten med signal
     results_df = pd.DataFrame(working_results)
-    analysis_csv = "analysis_results.csv"
+    analysis_csv = "analysis_results_rsi_sma.csv"
     results_df.to_csv(analysis_csv, index=False)
     print(f"📄 Resultaten sparade i '{analysis_csv}'.")
